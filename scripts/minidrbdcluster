@@ -5,6 +5,7 @@ import os
 import re
 import signal
 import subprocess
+import time
 
 DRBDADM_OPEN_FAILED_RE = re.compile(
     'open\\((.*)\\) failed: No such file or directory'
@@ -83,6 +84,10 @@ def get_systemd_units(systemd_units_str):
 
 def process(events2, resources, services, status):
     line = events2.stdout.readline()
+    if not line:
+        time.sleep(1)
+        return
+
     m = MAY_PROMOT_RE.match(line)
     if m:
         res_name, may_promote, promotion_score = m.groups()
